@@ -298,7 +298,8 @@ $.Autocompleter = function(input, options) {
       autocActive = false;
       var cur = smartVal();
       cur = cur.substring(0,cursorStart -1);
-      v = cur + options.formatFoundResult(v);
+      log.info("found Data! " + selected.data[0] + ' ' + selected.data[1])
+      v = cur + options.formatFoundResult(selected.data);
       v = v + '<span id="cursorStart">—</span>';
       //storeContentEditableCursor();
     }
@@ -684,7 +685,7 @@ $.Autocompleter.defaults = {
   extraParams: {},
   selectFirst: true,
   formatItem: function(row) { return row[0]; },
-  formatFoundResult: function(val) { return '<a contenteditable="false" href="#" tabindex="-1" >@' + val + '</a>&nbsp;';},
+  formatFoundResult: function(row) { return '<a contenteditable="false" href="#" tabindex="-1" >@' + row[0] + '</a>&nbsp;';},
   formatMatch: null,
   autoFill: false,
   width: 0,
