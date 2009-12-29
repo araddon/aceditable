@@ -397,10 +397,10 @@
                         <label for=""><span>Enter Valid Twitter Username</span></label>
                         <input id="twittername" type="text" value="cnn" name="twittername"/>
                         <br />
-                        <label>If you have entered your twitter username, now type msg and address to @friend</label>
+                        <label>Twitter edit type box, type @friend mixed amongst text</label>
                         <div class="editable_base editable_input_area">
                             <div class="editable_shawdow">
-                                <div id="ce2" class="editable_input" contenteditable="true" style="">
+                                <div id="ce2" class="editable_input" contenteditable="true" style="height:110px;">
                                 </div>
                             </div>
                         </div>
@@ -411,40 +411,28 @@
                         </div>
                         <script type="text/javascript"> 
                             jQuery(document).ready(function() {
-                                $.getJSON('http://twitter.com/statuses/friends/cnn.json?&callback=?', {}, function(json){
-                                    log.info("SWEET, got json from twitter!");
-                                    var names = [];
-                                    for ( var i = 0, ol = json.length; i < ol; i++ ) {
-                                        names[i] = [json[i].screen_name,json[i].profile_image_url];
-                                    }
-                                    $("#ce2").autocomplete(names, {
-                                            matchContains: true,
-                                            hotkeymode:true,
-                                            scroll: false,
-                                            startmsg: 'Type text, then @friend on twitter name...',
-                                            noresultsmsg: 'No matches, Do you want to create <a href="#">{q}</a>',
-                                            formatFoundResult: function(row) { return '<a contenteditable="false" class="custom" href="#" tabindex="-1" ><img width="16" height="16" src="' + row[1] +'"> @' + row[0] + '</a>&nbsp;';}
-                                    })
-                                });
-                                // formatFoundResult: function(row) { return '<a contenteditable="false" class="custom" href="#" tabindex="-1" ><img src="' + row'"> @' + val + '</a>&nbsp;';},
-                                //$.data(selected[0], "ac_data");
-                                $('#twittername').blur(function(){
-                                    var self = this;
-                                    $.getJSON('http://twitter.com/statuses/friends/' + $(this).val() + '.json?&callback=?', {}, function(json){
-                                        log.info("loaded " + $(self).val() + ' friends from twitter')
+                                
+                                function load_ce2(twittername){
+                                    $.getJSON('http://twitter.com/statuses/friends/' + twittername + '.json?&callback=?', {}, function(json){
+                                        log.info('SWEET, got json from twitter for ' + twittername + '!');
                                         var names = [];
                                         for ( var i = 0, ol = json.length; i < ol; i++ ) {
-                                            names[i] = [json[i].screen_name,json[i].profile_image_url];
+                                            names[i] = [json[i].screen_name,json[i].profile_image_url,json[i].name, json[i].followers_count];
                                         }
                                         $("#ce2").autocomplete(names, {
                                                 matchContains: true,
                                                 hotkeymode:true,
                                                 scroll: false,
+                                                formatItem: function(row) { return '<img width="32" height="32" src="' + row[1] +'"> ' + row[2] + ' @' + row[0] + ': ' + row[3] + ' followers' },
                                                 startmsg: 'Type text, then @friend on twitter name...',
                                                 noresultsmsg: 'No matches, Do you want to create <a href="#">{q}</a>',
                                                 formatFoundResult: function(row) { return '<a contenteditable="false" class="custom" href="#" tabindex="-1" ><img width="16" height="16" src="' + row[1] +'"> @' + row[0] + '</a>&nbsp;';}
-                                        })
+                                        });
                                     });
+                                }
+                                load_ce2('cnn');
+                                $('#twittername').blur(function(){
+                                    load_ce2($(this).val() );
                                 });
                             });
                         </script>
@@ -452,21 +440,28 @@
                 </div>
                 <div id="plugin1" class="yui-u small_list ">
                     <div>
-                        <pre class="brush: js">
-                            $.getJSON('http://twitter.com/statuses/friends/cnn.json?&callback=?', {}, function(json){
-                                log.info("Sweet, got json from twitter!");
-                                var names = [];
-                                for ( var i = 0, ol = json.length; i < ol; i++ ) {
-                                    names[i] = [json[i].screen_name,json[i].profile_image_url];
-                                }
-                                $("#ce2").autocomplete(names, {
-                                        matchContains: true,
-                                        hotkeymode:true,
-                                        scroll: false,
-                                        startmsg: 'Type text, then @friend on twitter name...',
-                                        noresultsmsg: 'No matches, Do you want to create <a href="#">{q}</a>',
-                                        formatFoundResult: function(row) { return '<a contenteditable="false" class="custom" href="#" tabindex="-1" ><img width="16" height="16" src="' + row[1] +'"> @' + row[0] + '</a>&nbsp;';}
-                                })
+                        <pre class="brush: js" style="font-size:70%">
+                            function load_ce2(twittername){
+                                $.getJSON('http://twitter.com/statuses/friends/' + twittername + '.json?&callback=?', {}, function(json){
+                                    log.info('SWEET, got json from twitter for ' + twittername + '!');
+                                    var names = [];
+                                    for ( var i = 0, ol = json.length; i < ol; i++ ) {
+                                        names[i] = [json[i].screen_name,json[i].profile_image_url,json[i].name, json[i].followers_count];
+                                    }
+                                    $("#ce2").autocomplete(names, {
+                                            matchContains: true,
+                                            hotkeymode:true,
+                                            scroll: false,
+                                            formatItem: function(row) { return '<img width="32" height="32" src="' + row[1] +'"> ' + row[2] + ' @' + row[0] + ': ' + row[3] + ' followers' },
+                                            startmsg: 'Type text, then @friend on twitter name...',
+                                            noresultsmsg: 'No matches, Do you want to create <a href="#">{q}</a>',
+                                            formatFoundResult: function(row) { return '<a contenteditable="false" class="custom" href="#" tabindex="-1" ><img width="16" height="16" src="' + row[1] +'"> @' + row[0] + '</a>&nbsp;';}
+                                    });
+                                });
+                            }
+                            load_ce2('cnn');
+                            $('#twittername').blur(function(){
+                                load_ce2($(this).val() );
                             });
                         </pre>
 
