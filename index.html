@@ -1,1 +1,629 @@
-My GitHub Page
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd" >
+<HTML xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<HEAD>
+    <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <TITLE>Jquery Autocomplete - With</TITLE>
+    <META name="description" content="">
+    <link rel="stylesheet" type="text/css" href="static/base.css" media="all">
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
+    <script type="text/javascript" src="static/jquery.bgiframe.min.js"></script>
+    <script type="text/javascript" src="static/jquery.dimensions-min.js"></script>
+    <script type="text/javascript" src="static/jquery.autocomplete.js"></script>
+    
+    <script type="text/javascript" src="static/syntax/scripts/shCore.js"></script>
+    <script type="text/javascript" src="static/syntax/scripts/shBrushBash.js"></script>
+    <script type="text/javascript" src="static/syntax/scripts/shBrushPlain.js"></script>
+    <script type="text/javascript" src="static/syntax/scripts/shBrushJScript.js"></script>
+    <script type="text/javascript" src="static/syntax/scripts/shBrushXml.js"></script>
+    <link type="text/css" rel="stylesheet" href="static/syntax/styles/shCore.css"/>
+    <link type="text/css" rel="stylesheet" href="static/syntax/styles/shThemeDefault.css"/>
+    <script>
+    
+    var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+    var emails = [
+        { name: "Peter Pan", to: "peter@pan.de" },
+        { name: "Molly", to: "molly@yahoo.com" },
+        { name: "Forneria Marconi", to: "live@japan.jp" },
+        { name: "Master <em>Sync</em>", to: "205bw@samsung.com" },
+        { name: "Dr. <strong>Tech</strong> de Log", to: "g15@logitech.com" },
+        { name: "Don Corleone", to: "don@vegas.com" },
+        { name: "Mc Chick", to: "info@donalds.org" },
+        { name: "Donnie Darko", to: "dd@timeshift.info" },
+        { name: "Quake The Net", to: "webmaster@quakenet.org" },
+        { name: "Dr. Write", to: "write@writable.com" }
+    ];
+    var cities = [
+        "Aberdeen", "Ada", "Adamsville", "Addyston", "Adelphi", "Adena", "Adrian", "Akron",
+        "Albany", "Alexandria", "Alger", "Alledonia", "Alliance", "Alpha", "Alvada",
+        "Alvordton", "Amanda", "Amelia", "Amesville", "Amherst", "Amlin", "Amsden",
+        "Amsterdam", "Andover", "Anna", "Ansonia", "Antwerp", "Apple Creek", "Arcadia",
+        "Arcanum", "Archbold", "Arlington", "Ashland", "Ashley", "Ashtabula", "Ashville",
+        "Athens", "Attica", "Atwater", "Augusta", "Aurora", "Austinburg", "Ava", "Avon",
+        "Avon Lake", "Bainbridge", "Bakersville", "Baltic", "Baltimore", "Bannock",
+        "Barberton", "Barlow", "Barnesville", "Bartlett", "Barton", "Bascom", "Batavia",
+        "Bath", "Bay Village", "Beach City", "Beachwood", "Beallsville", "Beaver",
+        "Beaverdam", "Bedford", "Bellaire", "Bellbrook", "Belle Center", "Belle Valley",
+        "Bellefontaine", "Bellevue", "Bellville", "Belmont", "Belmore", "Beloit", "Belpre",
+        "Benton Ridge", "Bentonville", "Berea", "Bergholz", "Berkey", "Berlin",
+        "Berlin Center", "Berlin Heights", "Bethel", "Bethesda", "Bettsville", "Beverly",
+        "Bidwell", "Big Prairie", "Birmingham", "Blacklick", "Bladensburg", "Blaine",
+        "Blakeslee", "Blanchester", "Blissfield", "Bloomdale", "Bloomingburg",
+        "Bloomingdale", "Bloomville", "Blue Creek", "Blue Rock", "Bluffton",
+        "Bolivar", "Botkins", "Bourneville", "Bowerston", "Bowersville",
+        "Bowling Green", "Bradford", "Bradner", "Brady Lake", "Brecksville",
+        "Bremen", "Brewster", "Brice", "Bridgeport", "Brilliant", "Brinkhaven",
+        "Bristolville", "Broadview Heights", "Broadway", "Brookfield", "Brookpark",
+        "Brookville", "Brownsville", "Brunswick", "Bryan", "Buchtel", "Buckeye Lake",
+        "Buckland", "Bucyrus", "Buffalo", "Buford", "Burbank", "Burghill", "Burgoon",
+        "Burkettsville", "Burton", "Butler", "Byesville", "Cable", "Cadiz", "Cairo",
+        "Caldwell", "Caledonia", "Cambridge", "Camden", "Cameron", "Camp Dennison",
+        "Campbell", "Canal Fulton", "Canal Winchester", "Canfield", "Canton", "Carbon Hill",
+        "Carbondale", "Cardington", "Carey", "Carroll", "Carrollton", "Casstown",
+        "Castalia", "Catawba", "Cecil", "Cedarville", "Celina", "Centerburg",
+        "Chagrin Falls", "Chandlersville", "Chardon", "Charm", "Chatfield", "Chauncey",
+        "Cherry Fork", "Chesapeake", "Cheshire", "Chester", "Chesterhill", "Chesterland",
+        "Chesterville", "Chickasaw", "Chillicothe", "Chilo", "Chippewa Lake",
+        "Christiansburg", "Cincinnati", "Circleville", "Clarington", "Clarksburg",
+        "Clarksville", "Clay Center", "Clayton", "Cleveland", "Cleves", "Clifton",
+        "Clinton", "Cloverdale", "Clyde", "Coal Run", "Coalton", "Coldwater", "Colerain",
+        "College Corner", "Collins", "Collinsville", "Colton", "Columbia Station",
+        "Columbiana", "Columbus", "Columbus Grove", "Commercial Point", "Conesville",
+        "Conneaut", "Conover", "Continental", "Convoy", "Coolville", "Corning", "Cortland",
+        "Coshocton", "Covington", "Creola", "Crestline", "Creston", "Crooksville",
+        "Croton", "Crown City", "Cuba", "Cumberland", "Curtice", "Custar", "Cutler",
+        "Cuyahoga Falls", "Cygnet", "Cynthiana", "Dalton", "Damascus", "Danville",
+        "Dayton", "De Graff", "Decatur", "Deerfield", "Deersville", "Defiance",
+        "Delaware", "Dellroy", "Delphos", "Delta", "Dennison", "Derby", "Derwent",
+        "Deshler", "Dexter City", "Diamond", "Dillonvale", "Dola", "Donnelsville",
+        "Dorset", "Dover", "Doylestown", "Dresden", "Dublin", "Dunbridge", "Duncan Falls",
+        "Dundee", "Dunkirk", "Dupont", "East Claridon", "East Fultonham",
+        "East Liberty", "East Liverpool", "East Palestine", "East Rochester",
+        "East Sparta", "East Springfield", "Eastlake", "Eaton", "Edgerton", "Edison",
+        "Edon", "Eldorado", "Elgin", "Elkton", "Ellsworth", "Elmore", "Elyria",
+        "Empire", "Englewood", "Enon", "Etna", "Euclid", "Evansport", "Fairborn",
+        "Fairfield", "Fairpoint", "Fairview", "Farmdale", "Farmer", "Farmersville",
+        "Fayette", "Fayetteville", "Feesburg", "Felicity", "Findlay", "Flat Rock",
+        "Fleming", "Fletcher", "Flushing", "Forest", "Fort Jennings", "Fort Loramie",
+        "Fort Recovery", "Fostoria", "Fowler", "Frankfort", "Franklin",
+        "Franklin Furnace", "Frazeysburg", "Fredericksburg", "Fredericktown",
+        "Freeport", "Fremont", "Fresno", "Friendship", "Fulton", "Fultonham",
+        "Galena", "Galion", "Gallipolis", "Galloway", "Gambier", "Garrettsville",
+        "Gates Mills", "Geneva", "Genoa", "Georgetown", "Germantown", "Gettysburg",
+        "Gibsonburg", "Girard", "Glandorf", "Glencoe", "Glenford", "Glenmont",
+        "Glouster", "Gnadenhutten", "Gomer", "Goshen", "Grafton", "Grand Rapids",
+        "Grand River", "Granville", "Gratiot", "Gratis", "Graysville", "Graytown",
+        "Green", "Green Camp", "Green Springs", "Greenfield", "Greenford",
+        "Greentown", "Greenville", "Greenwich", "Grelton", "Grove City",
+        "Groveport", "Grover Hill", "Guysville", "Gypsum", "Hallsville",
+        "Hamden", "Hamersville", "Hamilton", "Hamler", "Hammondsville",
+        "Hannibal", "Hanoverton", "Harbor View", "Harlem Springs", "Harpster",
+        "Harrisburg", "Harrison", "Harrisville", "Harrod", "Hartford", "Hartville",
+        "Harveysburg", "Haskins", "Haverhill", "Haviland", "Haydenville", "Hayesville",
+        "Heath", "Hebron", "Helena", "Hicksville", "Higginsport", "Highland", "Hilliard",
+        "Hillsboro", "Hinckley", "Hiram", "Hockingport", "Holgate", "Holland",
+        "Hollansburg", "Holloway", "Holmesville", "Homer", "Homerville", "Homeworth",
+        "Hooven", "Hopedale", "Hopewell", "Houston", "Howard", "Hoytville", "Hubbard",
+        "Hudson", "Huntsburg", "Huntsville", "Huron", "Iberia", "Independence",
+        "Irondale", "Ironton", "Irwin", "Isle Saint George", "Jackson", "Jackson Center",
+        "Jacksontown", "Jacksonville", "Jacobsburg", "Jamestown", "Jasper",
+        "Jefferson", "Jeffersonville", "Jenera", "Jeromesville", "Jerry City",
+        "Jerusalem", "Jewell", "Jewett", "Johnstown", "Junction City", "Kalida",
+        "Kansas", "Keene", "Kelleys Island", "Kensington", "Kent", "Kenton",
+        "Kerr", "Kettlersville", "Kidron", "Kilbourne", "Killbuck", "Kimbolton",
+        "Kings Mills", "Kingston", "Kingsville", "Kinsman", "Kipling", "Kipton",
+        "Kirby", "Kirkersville", "Kitts Hill", "Kunkle", "La Rue", "Lacarne",
+        "Lafayette", "Lafferty", "Lagrange", "Laings", "Lake Milton", "Lakemore",
+        "Lakeside Marblehead", "Lakeview", "Lakeville", "Lakewood", "Lancaster",
+        "Langsville", "Lansing", "Latham", "Latty", "Laura", "Laurelville",
+        "Leavittsburg", "Lebanon", "Lees Creek", "Leesburg", "Leesville",
+        "Leetonia", "Leipsic", "Lemoyne", "Lewis Center", "Lewisburg",
+        "Lewistown", "Lewisville", "Liberty Center", "Lima", "Limaville",
+        "Lindsey", "Lisbon", "Litchfield", "Lithopolis", "Little Hocking",
+        "Lockbourne", "Lodi", "Logan", "London", "Londonderry",
+        "Long Bottom", "Lorain", "Lore City", "Loudonville", "Louisville",
+        "Loveland", "Lowell", "Lowellville", "Lower Salem", "Lucas",
+        "Lucasville", "Luckey", "Ludlow Falls", "Lynchburg", "Lynx",
+        "Lyons", "Macedonia", "Macksburg", "Madison", "Magnetic Springs",
+        "Magnolia", "Maineville", "Malaga", "Malinta", "Malta", "Malvern",
+        "Manchester", "Mansfield", "Mantua", "Maple Heights", "Maplewood",
+        "Marathon", "Marengo", "Maria Stein", "Marietta", "Marion",
+        "Mark Center", "Marshallville", "Martel", "Martin", "Martins Ferry",
+        "Martinsburg", "Martinsville", "Marysville", "Mason", "Massillon",
+        "Masury", "Maumee", "Maximo", "Maynard", "Mc Arthur", "Mc Clure",
+        "Mc Comb", "Mc Connelsville", "Mc Cutchenville", "Mc Dermott",
+        "Mc Donald", "Mc Guffey", "Mechanicsburg", "Mechanicstown",
+        "Medina", "Medway", "Melmore", "Melrose", "Mendon", "Mentor",
+        "Mesopotamia", "Metamora", "Miamisburg", "Miamitown", "Miamiville",
+        "Middle Bass", "Middle Point", "Middlebranch", "Middleburg",
+        "Middlefield", "Middleport", "Middletown", "Midland", "Midvale",
+        "Milan", "Milford", "Milford Center", "Millbury", "Milledgeville",
+        "Miller City", "Millersburg", "Millersport", "Millfield",
+        "Milton Center", "Mineral City", "Mineral Ridge", "Minerva",
+        "Minford", "Mingo", "Mingo Junction", "Minster", "Mogadore",
+        "Monclova", "Monroe", "Monroeville", "Montezuma", "Montpelier",
+        "Montville", "Morral", "Morristown", "Morrow", "Moscow",
+        "Mount Blanchard", "Mount Cory", "Mount Eaton", "Mount Gilead",
+        "Mount Hope", "Mount Liberty", "Mount Orab", "Mount Perry",
+        "Mount Pleasant", "Mount Saint Joseph", "Mount Sterling",
+        "Mount Vernon", "Mount Victory", "Mowrystown", "Moxahala",
+        "Munroe Falls", "Murray City", "Nankin", "Napoleon", "Nashport",
+        "Nashville", "Navarre", "Neapolis", "Neffs", "Negley",
+        "Nelsonville", "Nevada", "Neville", "New Albany", "New Athens",
+        "New Bavaria", "New Bloomington", "New Bremen", "New Carlisle",
+        "New Concord", "New Hampshire", "New Haven", "New Holland",
+        "New Knoxville", "New Lebanon", "New Lexington", "New London",
+        "New Madison", "New Marshfield", "New Matamoras", "New Middletown",
+        "New Paris", "New Philadelphia", "New Plymouth", "New Richmond",
+        "New Riegel", "New Rumley", "New Springfield", "New Straitsville",
+        "New Vienna", "New Washington", "New Waterford", "New Weston",
+        "Newark", "Newbury", "Newcomerstown", "Newport", "Newton Falls",
+        "Newtonsville", "Ney", "Niles", "North Baltimore", "North Bend",
+        "North Benton", "North Bloomfield", "North Fairfield",
+        "North Georgetown", "North Hampton", "North Jackson",
+        "North Kingsville", "North Lawrence", "North Lewisburg",
+        "North Lima", "North Olmsted", "North Ridgeville", "North Robinson",
+        "North Royalton", "North Star", "Northfield", "Northwood", "Norwalk",
+        "Norwich", "Nova", "Novelty", "Oak Harbor", "Oak Hill", "Oakwood",
+        "Oberlin", "Oceola", "Ohio City", "Okeana", "Okolona", "Old Fort",
+        "Old Washington", "Olmsted Falls", "Ontario", "Orangeville",
+        "Oregon", "Oregonia", "Orient", "Orrville", "Orwell", "Osgood",
+        "Ostrander", "Ottawa", "Ottoville", "Otway", "Overpeck",
+        "Owensville", "Oxford", "Painesville", "Palestine", "Pandora",
+        "Paris", "Parkman", "Pataskala", "Patriot", "Paulding", "Payne",
+        "Pedro", "Peebles", "Pemberton", "Pemberville", "Peninsula",
+        "Perry", "Perrysburg", "Perrysville", "Petersburg", "Pettisville",
+        "Phillipsburg", "Philo", "Pickerington", "Piedmont", "Pierpont",
+        "Piketon", "Piney Fork", "Pioneer", "Piqua", "Pitsburg",
+        "Plain City", "Plainfield", "Pleasant City", "Pleasant Hill",
+        "Pleasant Plain", "Pleasantville", "Plymouth", "Polk",
+        "Pomeroy", "Port Clinton", "Port Jefferson", "Port Washington",
+        "Port William", "Portage", "Portland", "Portsmouth", "Potsdam",
+        "Powell", "Powhatan Point", "Proctorville", "Prospect", "Put in Bay",
+        "Quaker City", "Quincy", "Racine", "Radnor", "Randolph", "Rarden",
+        "Ravenna", "Rawson", "Ray", "Rayland", "Raymond", "Reedsville",
+        "Reesville", "Reno", "Republic", "Reynoldsburg", "Richfield",
+        "Richmond", "Richmond Dale", "Richwood", "Ridgeville Corners",
+        "Ridgeway", "Rio Grande", "Ripley", "Risingsun", "Rittman",
+        "Robertsville", "Rock Camp", "Rock Creek", "Rockbridge", "Rockford",
+        "Rocky Ridge", "Rocky River", "Rogers", "Rome", "Rootstown", "Roseville",
+        "Rosewood", "Ross", "Rossburg", "Rossford", "Roundhead", "Rudolph",
+        "Rushsylvania", "Rushville", "Russells Point", "Russellville", "Russia",
+        "Rutland", "Sabina", "Saint Clairsville", "Saint Henry", "Saint Johns",
+        "Saint Louisville", "Saint Marys", "Saint Paris", "Salem", "Salesville",
+        "Salineville", "Sandusky", "Sandyville", "Sarahsville", "Sardinia",
+        "Sardis", "Savannah", "Scio", "Scioto Furnace", "Scott", "Scottown",
+        "Seaman", "Sebring", "Sedalia", "Senecaville", "Seven Mile", "Seville",
+        "Shade", "Shadyside", "Shandon", "Sharon Center", "Sharpsburg",
+        "Shauck", "Shawnee", "Sheffield Lake", "Shelby", "Sherrodsville",
+        "Sherwood", "Shiloh", "Short Creek", "Shreve", "Sidney", "Sinking Spring",
+        "Smithfield", "Smithville", "Solon", "Somerdale", "Somerset",
+        "Somerville", "South Bloomingville", "South Charleston", "South Lebanon",
+        "South Point", "South Salem", "South Solon", "South Vienna",
+        "South Webster", "Southington", "Sparta", "Spencer", "Spencerville",
+        "Spring Valley", "Springboro", "Springfield", "Stafford", "Sterling",
+        "Steubenville", "Stewart", "Stillwater", "Stockdale", "Stockport",
+        "Stone Creek", "Stony Ridge", "Stout", "Stoutsville", "Stow", "Strasburg",
+        "Stratton", "Streetsboro", "Strongsville", "Struthers", "Stryker",
+        "Sugar Grove", "Sugarcreek", "Sullivan", "Sulphur Springs", "Summerfield",
+        "Summit Station", "Summitville", "Sunbury", "Swanton", "Sycamore",
+        "Sycamore Valley", "Sylvania", "Syracuse", "Tallmadge", "Tarlton",
+        "Terrace Park", "The Plains", "Thompson", "Thornville", "Thurman",
+        "Thurston", "Tiffin", "Tiltonsville", "Tipp City", "Tippecanoe", "Tiro",
+        "Toledo", "Tontogany", "Torch", "Toronto", "Tremont City", "Trenton",
+        "Trimble", "Trinway", "Troy", "Tuppers Plains", "Tuscarawas", "Twinsburg",
+        "Uhrichsville", "Union City", "Union Furnace", "Unionport", "Uniontown",
+        "Unionville", "Unionville Center", "Uniopolis", "Upper Sandusky", "Urbana",
+        "Utica", "Valley City", "Van Buren", "Van Wert", "Vandalia", "Vanlue",
+        "Vaughnsville", "Venedocia", "Vermilion", "Verona", "Versailles",
+        "Vickery", "Vienna", "Vincent", "Vinton", "Wadsworth", "Wakefield",
+        "Wakeman", "Walbridge", "Waldo", "Walhonding", "Walnut Creek", "Wapakoneta",
+        "Warnock", "Warren", "Warsaw", "Washington Court House",
+        "Washingtonville", "Waterford", "Waterloo", "Watertown", "Waterville",
+        "Wauseon", "Waverly", "Wayland", "Wayne", "Waynesburg", "Waynesfield",
+        "Waynesville", "Wellington", "Wellston", "Wellsville", "West Alexandria",
+        "West Chester", "West Elkton", "West Farmington", "West Jefferson",
+        "West Lafayette", "West Liberty", "West Manchester", "West Mansfield",
+        "West Millgrove", "West Milton", "West Point", "West Portsmouth",
+        "West Rushville", "West Salem", "West Union", "West Unity", "Westerville",
+        "Westfield Center", "Westlake", "Weston", "Westville", "Wharton",
+        "Wheelersburg", "Whipple", "White Cottage", "Whitehouse", "Wickliffe",
+        "Wilberforce", "Wilkesville", "Willard", "Williamsburg", "Williamsfield",
+        "Williamsport", "Williamstown", "Williston", "Willoughby", "Willow Wood",
+        "Willshire", "Wilmington", "Wilmot", "Winchester", "Windham", "Windsor",
+        "Winesburg", "Wingett Run", "Winona", "Wolf Run", "Woodsfield",
+        "Woodstock", "Woodville", "Wooster", "Wren", "Xenia", "Yellow Springs",
+        "Yorkshire", "Yorkville", "Youngstown", "Zaleski", "Zanesfield", "Zanesville",
+        "Zoar"
+    ];
+    </script>
+    
+    
+    <style type="text/css">
+
+    div.infoBox,p.infoBox,ul.infoBox{font-size:.8em;padding:3px 5px;background:#ddd;
+      border-top:1px solid #E6E6E6;border-bottom:1px solid #E6E6E6;margin:4px 0;padding:3px 5px;color:#313131;font-style:italic;}
+    div.infoBox ul li{list-style-type:square;margin-left:20px;}
+
+    form.main_form span.wrap{position:relative;}
+    span.wrap{backgroundxx:#EEEEEE none repeat scroll 0 0;display:inline-block;line-height:1;margin:0 0 14px;padding:3px;width:100%;}
+    form.main_form span.wrap label{background:#FFFFFF none repeat scroll 0 0;position:absolute;top:5px;left:4px;line-height:24px;
+        padding:1px 0 0 3px;margin:0 0 0 4px;z-index:3;color :#CCCCCC;font-weight:normal;font-size:18px;height:23px;width:85%;}
+    .main_form label{cursor:pointer;display:block;font-size:13px;font-weight:bold;line-height:18px;}
+    .main_form input, .main_form textarea{ width: 90%;}
+    input,textarea,select{-moz-border-radius:4px;-webkit-border-radius:4px;border:2px solid #CCCCCC;font-size:1.2em;}
+
+    </style>
+    
+</HEAD>
+<body>
+<div id="hd">
+    <div id="nav">
+        <ul id="menu">
+            <li id="nav_home"><a href="/" class="">Jquery ACEditable</a></li>
+            <li id="nav_food"><a href="" class="">Demos</a></li>
+            <li id="nav_producers"><a href="#documentation" class="" alt="Documentation">Documentation</a></li>
+            <li id="nav_community"><a href="#download" class="">Download</a></li>
+            <li id="nav_about"><a href="#about" class="">About</a></li>
+        </ul>
+        <div id="headermeta">
+            <img height="16" width="16" style="vertical-align: -3px;" alt="Aaron Raddon" 
+                        src="http://www.gravatar.com/avatar/40b6834e5ab81ca1110d4ae5787e92f2?s=48"/>
+                <a href="/account/dashboard/" title="Dashboard page ">Contact</a>
+                <span class="divider">|</span> 
+                <a href="http://github.com/araddon/aceditable" title="Page about your account, how others view you">Github</a>
+        </div>
+    </div>
+</div>
+<div id="page-wrapper">
+    <div id=hd-shadow></div>
+    <div id="content-wrapper">
+        <!--
+        <div id="top-content" >
+            <div style="">
+                <div class='pagetabs' style="">
+                    <ul class='tabs'>
+                        <li><a class="" href="/css/colors/">Colors</a></li>
+                        <li><a class="" href="/css/forms/">Forms</a></li>
+                        <li><a class="" href="/css/autobox/">Autobox</a></li>
+                        <li><a class="active" href="/css/jq/">Jquery</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        -->
+        <div id="content">
+            <div id="content-spacer" style="display:block;" >
+        <style type="text/css">
+        li {list-style-type: decimal;}
+        </style>
+    
+        <div id="" class="standard_form" style="font-size:">
+            <form class="main_form">
+            <h2 class="h_top">JQuery Content Editable Plugin</h2>
+            <p>A modifed plugin that emulates the Facebook @friend lookup, and adds ContentEditable support, a demo below shows
+                how to look up twitter usernames with it.</p>
+            <p>This adds new features to the <a href="http://jquery.bassistance.de/autocomplete/demo/">Jquery AutoComplete</a> Plugin.</p>
+            <div class="yui-g " style="">
+                <h3 class="h_top">Content Editable with Hotkey (@)</h3>
+                <b>New Features:</b>
+                <ol>
+                    <li>Content Editable support means that you can format your results in html, links etc like the facebook friends lookup.</li>
+                    <li>the @ keyboard command means you can start looking in the middle of the text you are typing, not just at the beginning.</li>
+                    <li>New Start Message, End Message, and No Result Messages (Enter your cursor below in demos)</li>
+                </ol>
+                <div class="yui-u first">
+                        <label>Content Editable with @ hotkey</label>
+                        <div class="editable_base editable_input_area">
+                            <div class="editable_shawdow">
+                                <div id="ce1" class="editable_input" contenteditable="true" style="">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="infoBox" id="ce1_infobox" style="display:;">
+                            <b>Hotkeys:</b>  type some text, then After you have typed some text
+                            hit the hotkey @, and you will now get prompted for the list.  
+                            <p>The results are now caple of being formatted in html because it
+                                is using Content Editable.</p>
+                        </div>
+                        <script type="text/javascript"> 
+                            jQuery(document).ready(function() {
+                                $("#ce1").autocomplete(cities, {
+                                        matchContains: true,
+                                        multipleSeparator: ", ",
+                                        multiple: true,
+                                        scroll: false,
+                                        hotkeymode:true,
+                                        noresultsmsg: 'No matches, Do you want to create <a href="#">{q}</a>'
+                                });
+
+                            });
+                        </script>
+                    
+                </div>
+                <div id="plugin1" class="yui-u small_list ">
+                    <div>
+                        <pre class="brush: html">
+                            <div class="editable_base editable_input_area">
+                                <div class="editable_shawdow">
+                                    <div id="ce1" class="editable_input" contenteditable="true" style="">
+                                    </div>
+                                </div>
+                            </div>
+                        </pre>
+                        <pre class="brush: js">
+                            $("#ce1").autocomplete(cities, {
+                                    matchContains: true,
+                                    multipleSeparator: ", ",
+                                    multiple: true,
+                                    hotkeymode:true,
+                                    noresultsmsg: 'No matches, Do you want to create <a href="#">{q}</a>'
+                            })
+                        </pre>
+
+                    </div>
+                </div>
+            </div>
+            <div class="yui-g " style="">
+                <h3 class="h_top">Content Editable with Hotkeys using Twitter User Names</h3>
+                <div class="yui-u first">
+                        <label for=""><span>Enter Valid Twitter Username</span></label>
+                        <input id="twittername" type="text" value="cnn" name="twittername"/>
+                        <br />
+                        <label>If you have entered your twitter username, now type msg and address to @friend</label>
+                        <div class="editable_base editable_input_area">
+                            <div class="editable_shawdow">
+                                <div id="ce2" class="editable_input" contenteditable="true" style="">
+                                </div>
+                            </div>
+                        </div>
+                        <script type="text/javascript"> 
+                            jQuery(document).ready(function() {
+                                $.getJSON('http://twitter.com/statuses/friends/cnn.json?&callback=?', {}, function(json){
+                                    log.info("SWEET, got json from twitter!");
+                                    var names = [];
+                                    for ( var i = 0, ol = json.length; i < ol; i++ ) {
+                                        names[i] = json[i].screen_name;
+                                    }
+                                    $("#ce2").autocomplete(names, {
+                                            matchContains: true,
+                                            multipleSeparator: ", ",
+                                            multiple: true,
+                                            hotkeymode:true,
+                                            scroll: false,
+                                            startmsg: 'Type text, then @friend on twitter name...',
+                                            noresultsmsg: 'No matches, Do you want to create <a href="#">{q}</a>'
+                                    })
+                                });
+                                $('#twittername').blur(function(){
+                                    var self = this;
+                                    $.getJSON('http://twitter.com/statuses/friends/' + $(this).val() + '.json?&callback=?', {}, function(json){
+                                        log.info("loaded " + $(self).val() + ' friends from twitter')
+                                        var names = [];
+                                        for ( var i = 0, ol = json.length; i < ol; i++ ) {
+                                            names[i] = json[i].screen_name;
+                                        }
+                                        $("#ce2").autocomplete(names, {
+                                                matchContains: true,
+                                                multipleSeparator: ", ",
+                                                multiple: true,
+                                                hotkeymode:true,
+                                                startmsg: 'Type text, then @friend on twitter name...',
+                                                noresultsmsg: 'No matches, Do you want to create <a href="#">{q}</a>'
+                                        })
+                                    });
+                                });
+                            });
+                        </script>
+                    
+                </div>
+                <div id="plugin1" class="yui-u small_list ">
+                    <div>
+                        <pre class="brush: js">
+                            $.getJSON('http://twitter.com/statuses/friends/cnn.json?&callback=?', {}, function(json){
+                                log.info("Sweet, got json from twitter!");
+                                var names = [];
+                                for ( var i = 0, ol = json.length; i < ol; i++ ) {
+                                    names[i] = json[i].screen_name;
+                                }
+                                $("#ce2").autocomplete(names, {
+                                        matchContains: true,
+                                        multipleSeparator: ", ",
+                                        multiple: true,
+                                        hotkeymode:true,
+                                        startmsg: 'Type text, then @friend on twitter name...',
+                                        noresultsmsg: 'No matches, Do you want to create <a href="#">{q}</a>'
+                                })
+                            });
+                            $('#twittername').blur(function(){
+                                var self = this;
+                                $.getJSON('http://twitter.com/statuses/friends/' + $(this).val() + '.json?&callback=?', {}, function(json){
+                                    log.info("loaded " + $(self).val() + ' friends from twitter')
+                                    var names = [];
+                                    for ( var i = 0, ol = json.length; i < ol; i++ ) {
+                                        names[i] = json[i].screen_name;
+                                    }
+                                    $("#ce2").autocomplete(names, {
+                                            matchContains: true,
+                                            multipleSeparator: ", ",
+                                            multiple: true,
+                                            hotkeymode:true,
+                                            startmsg: 'Type text, then @friend on twitter name...',
+                                            noresultsmsg: 'No matches, Do you want to create <a href="#">{q}</a>'
+                                    })
+                                });
+                        </pre>
+
+                    </div>
+                </div>
+            </div>
+            <div class="yui-g " style="">
+                <h3 class="h_top">Start, End, Not found Messages and Events</h3>
+                <div class="yui-u first">
+                        <label for=""><span>Enter Valid Twitter Username</span></label>
+                        <input id="twittername" type="text" value="cnn" name="twittername"/>
+                        <br />
+                        <label>If you have entered your twitter username, now type msg and address to @friend</label>
+                        <div class="editable_base editable_input_area">
+                            <div class="editable_shawdow">
+                                <div id="ce2" class="editable_input" contenteditable="true" style="">
+                                </div>
+                            </div>
+                        </div>
+                        <script type="text/javascript"> 
+                            jQuery(document).ready(function() {
+                                $("#ac1").autocomplete(cities, {
+                                        matchContains: true
+                                });
+                                $("#ac2").autocomplete(months, {
+                                        matchContains: true,
+                                        startmsg: 'Type a month "Jquery" that doesn\'t exist...',
+                                        noresultsmsg: 'No matches, Do you want to create <a href="#">{q}</a>'
+                                }).bind("ac_noresult_click",function(event, q){
+                                    log.info("clicked no result message + q "+ q)
+                                });
+                                $("#ac3").autocomplete(cities, {
+                                        matchContains: true,
+                                        endmsg: 'You can select more than one item...',
+                                        startmsg: 'You can select more than one item...'
+                                });
+                            });
+                        </script>
+                    
+                </div>
+                <div id="plugin1" class="yui-u small_list ">
+                    <div>
+                        <pre class="brush: js">
+                                $("#ce2").autocomplete(names, {
+                                        matchContains: true,
+                                        multipleSeparator: ", ",
+                                        multiple: true,
+                                        hotkeymode:true,
+                                        startmsg: 'Type text, then @friend on twitter name...',
+                                        noresultsmsg: 'No matches, Do you want to create <a href="#">{q}</a>'
+                                })
+                        </pre>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script type="text/javascript">
+            SyntaxHighlighter.defaults['gutter'] = false;
+            SyntaxHighlighter.all();
+        </script>
+    
+
+            </div>
+        </div>
+    </div>
+    <div class="footer-spacer cb"></div> 
+</div>
+</form>
+<!-- start footer --> 
+<div id="footer"> 
+    <div class="fluid bar" style="clear:both;height:40px;"> 
+      <div class="fixed-lg container"> 
+        <div class="searchnav" style="width:90%;text-align:center; height: 50px;margin-left:80px;"> 
+            <form method="get" class="food-search" action="/food/search"  style="margin-top:-11px;">
+                <input id="search-box" type="text" value="" class="hint" hint="Search..." title="Search" size="30" name="q"  style="padding:5px;"/>
+                <!--<input id="search-submit" type="image" src="/static/images/search.png" alt="Search" style="padding:0px;margin:0px 0 -12px;"/>-->
+            </form>
+        </div> 
+      </div> 
+    </div> 
+    
+    <div id="footerdiv"> 
+        <div class="sitemap"> 
+          <ul> 
+            <li><a href="/food"><strong>Shop for Food</strong></a> 
+              <ul> 
+                <li><a href="/about/learnmore">How it Works</a></li> 
+                <li><a href="/food">Categories</a></li> 
+                <li><a href="/food?search=filter">Search</a></li> 
+                <li><a href="/food/producers">Producers</a></li> 
+              </ul> 
+            </li> 
+          </ul> 
+          <ul> 
+            <li><a href="/about/learn_sellers"><strong>Sell Food</strong></a> 
+              <ul> 
+                <li><a href="/producer/profileedit/?become_sellor">Signup as Seller</a></li> 
+                <li><a href="/about/learn_sellers">How it Works</a></li> 
+                <li><a href="/about/getting_paid">Getting Paid</a></li> 
+              </ul> 
+            </li> 
+          </ul> 
+          <ul> 
+            <li><a href="/about/"><strong>Company</strong></a> 
+              <ul> 
+                <li><a href="/about/">About Us</a></li> 
+                <li><a href="/about/faq/">FAQ</a></li> 
+                <li><a href="/about/contact/">Contact Us</a></li> 
+                <li><a href="/about/press/">Press</a></li> 
+              </ul> 
+            </li> 
+          </ul> 
+          <ul> 
+            <li><a href="/support"><strong></strong></a> 
+              <ul> 
+                  
+                  <li><a href="/admin/debug/" class="showtipsy" title="the admin pages for gearman, redis etc">debug</a></li> 
+                  <li><a href="/css/colors/">css colors</a></li> 
+                  <li><a href="/css/forms/">css forms</a></li> 
+                  
+              </ul> 
+            </li> 
+          </ul> 
+        </div> 
+        
+        <div class="footer-feature"> 
+            <p class="copyright fl-right">
+                  Current Location: Portland OR &nbsp;
+                  <a class="supportnumber fl-right" href="/regions/" title="Contact">Change</a> 
+            </p>
+            
+            
+          <p class="copyright cl-right">
+              <a id="twitterlink" href="http://twitter.com/local151" target="_blank"><span>Follow us on Twitter!</span><strong>&nbsp;</strong></a> 
+              &copy; 2009-2010 Local151 <a href="/about/legal/">Legal</a> : <a href="/about/legal/">Privacy</a></p> 
+        </div> 
+        
+        <div class="clearfix">&nbsp;</div> 
+  </div> 
+</div> 
+<!-- end footer -->
+
+
+
+    <script type="text/javascript" src="/static/js/jquery-1.3.2.min.js"></script>
+    <script src="/static/js/tipsy/jquery.tipsy.js" type="text/javascript" ></script>
+
+
+
+    <style media="screen" type="text/css">
+    li {list-style-image:none;list-style-position:outside;list-style-type:none;}
+    </style>
+</div>
+<div class="clear" ></div>
+
+<script type="text/javascript"> 
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-XXXXX-X']);
+    _gaq.push(['_trackPageview']);
+    (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ga);
+    })();
+    
+    jQuery(document).ready(function() {
+
+    });
+</script>
+
+</body>
+</html>
+
+
+
+
