@@ -59,7 +59,7 @@ E9F2F9  light blue
 ddd grey
 */
 body {color: #444;background-colorxx:#F0EEE8;}
-#hd {background-color:#333;border-top:3px solid #bf4904;border-bottom:1px solid #bf4904;}
+#hd {background-color:#333;border-top:3px solid #000;border-bottom:1px solid #000;}
 #nav a {color:#fff;}
 a {color:#bf4904;text-decoration:none;}
 .actions input, .button {background-color:#ddd;border-color:#bf4904;color:#bf4904;border:1px solid #bf4904;}
