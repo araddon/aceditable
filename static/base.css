@@ -76,7 +76,7 @@ a {color:#bf4904;text-decoration:none;}
 
 #hd {padding: 0;margin: 0;}
 #hd #nav{text-align:center; margin: 0px auto;width: 1000px;}
-#hd #nav ul#menu {float:left; width: 600px;margin: 1em 0;}
+#hd #nav ul#menu {float:left; width: 650px;margin: 1em 0;}
 body .fluid {min-width:920px;width:100%;}
 #nav ul#menu li a {display:block;height:100%;width:100%;font-size:1.15em;}
 #nav ul#menu li {background-repeat:no-repeat;display:inline;float:left;height:23px;margin:0 7px;overflow:hidden;padding:0;}
@@ -84,7 +84,7 @@ body .fluid {min-width:920px;width:100%;}
 #nav ul#menu li a.active{color:#8DC63F;background:#FFF none;border-bottom:2px solid #8DC63F;}
 #nav a {font-weight:bold;}
 #headermeta{margin: 0px 0 0 0;color:#888888;border-bottom:0px solid #bf4904;border-left:0px solid #bf4904;border-right:0px solid #bf4904;
-  float:right;top:0;font-size:12px;width:270px;padding:4px 5px 5px 5px;text-align:right;
+  float:right;top:0;font-size:12px;width:230px;padding:4px 5px 5px 5px;text-align:right;
   border-bottom-left-radius:3px 3px;border-bottom-right-radius:3px 3px;
   -moz-border-radius-bottomleft:3px;
   -moz-border-radius-bottomright:3px;
