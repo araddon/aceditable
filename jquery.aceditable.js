@@ -81,7 +81,7 @@ $.Autocompleter = function(input, options) {
     SPACE: 32,
     LEFT: 37,
     RIGHT: 39,
-    AT: 64, 
+    AT: 50, 
     POUND:34,  
     DOLLAR:52,
     SEMIC:59
@@ -130,19 +130,20 @@ $.Autocompleter = function(input, options) {
   }
   
   // only opera doesn't trigger keydown multiple times while pressed, others don't work with keypress at all
-  $input.bind(($.browser.opera ? "keypress" : "keypress") + ".autocomplete", function(event) {
+  $input.bind(($.browser.opera ? "keypress" : "keydown") + ".autocomplete", function(event) {
     // a keypress means the input has focus
     // avoids issue where input had focus before the autocomplete was applied
     hasFocus = 1;
     var k=event.keyCode || event.which; // keyCode == 0 in Gecko/FF on keypress
+    //log.debug("keypress: " + k + ' ' + event.shiftKey)
     // track history, probably should push/pop an array
     prePreKeyPressCode = preKeyPressCode;
     preKeyPressCode = lastKeyPressCode;
     lastKeyPressCode = k;
     if (options.hotkeymode && autocActive === false){
-      if (k == KEY.AT && (KEY.SPACE == preKeyPressCode || preKeyPressCode == undefined)){
+      if (k == KEY.AT && event.shiftKey && (KEY.SPACE == prePreKeyPressCode || prePreKeyPressCode == undefined)){
         autocActive = true;
-        setCursorStart();
+        log.debug("AutoComplete now active in Hotkey mode")
         clearTimeout(timeout);
         timeout = setTimeout(onChange, options.delay);
       }
@@ -306,15 +307,9 @@ $.Autocompleter = function(input, options) {
     smartVal(v);
     hideResultsNow();
     $input.trigger("result", [selected.data, selected.value]);
-    editableReturnCursor();
+    if ( options.hotkeymode)
+      editableReturnCursor();
     return true;
-  }
-  
-  function setCursorStart(){
-    var val = smartVal();
-    // the last character is hotkey
-    cursorStart = val.length + 1;
-    //log.debug('set cursor: ' + val + ' len = ' + cursorStart)
   }
   
   function setupContentEditable(){
@@ -386,14 +381,14 @@ $.Autocompleter = function(input, options) {
           // TODO:  gracefully degrate to textarea?
       }
       
-      var cursorStart = document.createElement('span'),
+      var cursorStartSpan = document.createElement('span'),
           collapsed = !!editableRange.collapsed;
         
-      cursorStart.id = 'cursorStart';
-      cursorStart.appendChild(document.createTextNode('—'));
+      cursorStartSpan.id = 'cursorStart';
+      cursorStartSpan.appendChild(document.createTextNode('—'));
       
       // Insert beginning cursor marker
-      editableRange.insertNode(cursorStart);
+      editableRange.insertNode(cursorStartSpan);
       
       // Insert end cursor marker if any text is selected
       if(!collapsed) {
@@ -408,7 +403,7 @@ $.Autocompleter = function(input, options) {
       // Slight delay will avoid the initial selection
       // (at start or of contents depending on browser) being mistaken
       setTimeout(function() {
-          var cursorStart = document.getElementById('cursorStart'),
+          var cursorStartSpan = document.getElementById('cursorStart'),
               cursorEnd = document.getElementById('cursorEnd');
           
           if (window.getSelection) {        // Firefox, Safari, Opera
@@ -423,7 +418,7 @@ $.Autocompleter = function(input, options) {
           } else {
               if (document.body.createTextRange) {    // Internet Explorer
                   var rangeToSelect = document.body.createTextRange();
-                  rangeToSelect.moveToElementText(cursorStart);
+                  rangeToSelect.moveToElementText(cursorStartSpan);
                   rangeToSelect.select();
                   document.selection.clear();
               }
@@ -500,8 +495,14 @@ $.Autocompleter = function(input, options) {
       return words[words.length - 1];
     // hotkeymode
     } else {
+      if (value && value.lastIndexOf('@') > 0){
+        cursorStart = value.lastIndexOf('@') + 1;
+      } else {
+        log.error("found no @ in hotkeymode?" + value)
+        cursorStart = value.length + 2;
+      }
       value = value.substring(cursorStart);
-      //log.info("findSearchTerm: cursorStart,val " + cursorStart + ', ' + value)
+      log.info("findSearchTerm: cursorStart,val " + cursorStart + ', ' + value)
       return value; //.trim();
     }
   }
@@ -534,7 +535,12 @@ $.Autocompleter = function(input, options) {
       if (val != undefined) {
         return $input.html(val);
       } else {
-        val = $input.html().trim();
+        val = $input.html();
+        if (val != undefined && val.length != undefined && val.length > 0) {
+          val = $.trim(val);
+        } else {
+          val = ''
+        }
         var endval = '', li = 0;
         // replace <br> or &nbsp; BUT, only in last bit (10) or past hotkey
         // contenteditable appends <br> to end a lot, or the last space as &nbsp;
@@ -542,10 +548,12 @@ $.Autocompleter = function(input, options) {
           li = val.lastIndexOf('@') > 0 ? val.lastIndexOf('@') + 1 : val.length - 10;
           endval = val.substring(li);
           val = val.substring(0,val.length - endval.length);
+          //log.debug('used substring @ ' + val)
         } else {
           endval = val;
           val = '';
         }
+        // only clean up end of markup, where they are doing insertion?
         endval = endval.replace("<br>",'').replace("<br/>",'').replace("&nbsp;",' ');
         val = val + endval;
         //log.debug("smartVal endval = " + escape(endval) + ' val= ' + escape(val))
