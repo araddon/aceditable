@@ -218,6 +218,7 @@ $.Autocompleter = function(input, options) {
     // results if the field no longer has focus
     hasFocus++;
     if( autocActive === true ) {
+      log.info("in focus on change")
       onChange(0, true);
     }
   }).blur(function() {
@@ -301,13 +302,16 @@ $.Autocompleter = function(input, options) {
       cur = cur.substring(0,cursorStart -1);
       log.info("found Data! " + selected.data[0] + ' ' + selected.data[1])
       v = cur + options.formatFoundResult(selected.data);
-      v = v + '<span id="cursorStart">—</span>';
+      if (input.value == undefined) {
+        v = v + '<span id="cursorStart">—</span>';
+      }
+      
       //storeContentEditableCursor();
     }
     smartVal(v);
     hideResultsNow();
     $input.trigger("result", [selected.data, selected.value]);
-    if ( options.hotkeymode)
+    if ( options.hotkeymode && input.value == undefined)
       editableReturnCursor();
     return true;
   }
@@ -409,7 +413,7 @@ $.Autocompleter = function(input, options) {
           if (window.getSelection) {        // Firefox, Safari, Opera
             editableSelection = window.getSelection();
             var range = document.createRange();
-            range.selectNode(cursorStart);
+            range.selectNode(cursorStartSpan);
             // Select range
             editableSelection.removeAllRanges();
             editableSelection.addRange(range);
@@ -622,6 +626,7 @@ $.Autocompleter = function(input, options) {
         extraParams[key] = typeof param == "function" ? param() : param;
       });
       
+      log.debug("calling ajax, term = " + term, ' dataType = ' + options.dataType)
       $.ajax({
         // try to leverage ajaxQueue plugin to abort previous requests
         mode: "abort",
@@ -630,11 +635,11 @@ $.Autocompleter = function(input, options) {
         dataType: options.dataType,
         url: options.url,
         data: $.extend({
-          q: findSearchTerm(term),
+          q: term,
           limit: options.max
         }, extraParams),
         success: function(data) {
-          var parsed = options.parse && options.parse(data) || parse(data);
+          var parsed = options.parse && options.parse(data) || parse_json(data);
           cache.add(term, parsed);
           success(term, parsed);
         }
@@ -652,22 +657,18 @@ $.Autocompleter = function(input, options) {
     }
   };
   
-  function parse(data) {
+  function parse_json(json){
     var parsed = [];
-    var rows = data.split("\n");
-    for (var i=0; i < rows.length; i++) {
-      var row = $.trim(rows[i]);
-      if (row) {
-        row = row.split("|");
-        parsed[parsed.length] = {
-          data: row,
-          value: row[0],
-          result: options.formatResult && options.formatResult(row, row[0]) || row[0]
+    log.debug("parsing json, len=" + json.length)
+    for ( var i = 0, ol = json.length; i < ol; i++ ) {
+        parsed[i] = {
+          data: json[i],
+          value: json[i][options.jsonterm],
+          result: options.formatResult && options.formatResult(json[i]) || json[i][options.jsonterm]
         };
-      }
     }
     return parsed;
-  };
+  }
 
   function stopLoading() {
     $input.removeClass(options.loadingClass);
@@ -691,6 +692,8 @@ $.Autocompleter.defaults = {
   max: 100,
   mustMatch: false,
   extraParams: {},
+  jsonterm: 'name',
+  dataType: 'json',
   selectFirst: true,
   formatItem: function(row) { return row[0]; },
   formatFoundResult: function(row) { return '<a contenteditable="false" href="#" tabindex="-1" >@' + row[0] + '</a>&nbsp;';},
@@ -704,8 +707,8 @@ $.Autocompleter.defaults = {
   highlight: function(value, term) {
     return value.replace(new RegExp("(?![^&;]+;)(?!<[^<>]*)(" + term.replace(/([\^\$\(\)\[\]\{\}\*\.\+\?\|\\])/gi, "\\$1") + ")(?![^<>]*>)(?![^&;]+;)", "gi"), "<strong>$1</strong>");
   },
-    scroll: true,
-    scrollHeight: 180
+  scroll: true,
+  scrollHeight: 180
 };
 
 $.Autocompleter.Cache = function(options) {
