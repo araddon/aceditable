@@ -218,7 +218,6 @@ $.Autocompleter = function(input, options) {
     // results if the field no longer has focus
     hasFocus++;
     if( autocActive === true ) {
-      log.info("in focus on change")
       onChange(0, true);
     }
   }).blur(function() {
@@ -616,6 +615,7 @@ $.Autocompleter = function(input, options) {
     // recieve the cached data
     if (data && data.length) {
       success(term, data);
+      return;
     // if an AJAX url has been supplied, try loading the data now
     } else if( (typeof options.url == "string") && (options.url.length > 0) ){
       
@@ -625,7 +625,7 @@ $.Autocompleter = function(input, options) {
       $.each(options.extraParams, function(key, param) {
         extraParams[key] = typeof param == "function" ? param() : param;
       });
-      
+      var found = false;
       log.debug("calling ajax, term = " + term, ' dataType = ' + options.dataType)
       $.ajax({
         // try to leverage ajaxQueue plugin to abort previous requests
@@ -639,21 +639,26 @@ $.Autocompleter = function(input, options) {
           limit: options.max
         }, extraParams),
         success: function(data) {
-          var parsed = options.parse && options.parse(data) || parse_json(data);
-          cache.add(term, parsed);
-          success(term, parsed);
+          if (data.length > 0){
+            found = true;
+            var parsed = options.parse && options.parse(data) || parse_json(data);
+            cache.add(term, parsed);
+            success(term, parsed);
+          }
         }
       });
+      if (found === true)
+        return;
+    } 
+    
+    select.emptyList();
+    if (options.noresultsmsg != null) {
+      stopLoading();
+      select.display({}, term);
+      select.show();
     } else {
-      select.emptyList();
-      if (options.noresultsmsg != null) {
-        stopLoading();
-        select.display({}, term);
-        select.show();
-      } else {
-        // if we have a failure, we need to empty the list -- this prevents the the [TAB] key from selecting the last successful match
-        failure(term);
-      }
+      // if we have a failure, we need to empty the list -- this prevents the the [TAB] key from selecting the last successful match
+      failure(term);
     }
   };
   
@@ -695,8 +700,8 @@ $.Autocompleter.defaults = {
   jsonterm: 'name',
   dataType: 'json',
   selectFirst: true,
-  formatItem: function(row) { return row[0]; },
-  formatFoundResult: function(row) { return '<a contenteditable="false" href="#" tabindex="-1" >@' + row[0] + '</a>&nbsp;';},
+  formatItem: function(row) { return row[options.jsonterm]; },
+  formatFoundResult: function(row) { return '<a contenteditable="false" href="#" tabindex="-1" >@' + row[options.jsonterm] + '</a>&nbsp;';},
   formatMatch: null,
   autoFill: false,
   width: 0,
@@ -1017,6 +1022,7 @@ $.Autocompleter.Select = function (options, input, select, config) {
       }
     },
     hide: function() {
+      log.info("hiding?")
       element && element.hide();
       listItems && listItems.removeClass(CLASSES.ACTIVE);
       active = -1;
