@@ -701,11 +701,9 @@ $.Autocompleter.defaults = {
   max: 100,
   mustMatch: false,
   extraParams: {},
-  jsonterm: 'name',
+  jsonterm: 0, // 'name' ??
   dataType: 'json',
   selectFirst: true,
-  formatItem: function(row) { return row[0]; },
-  formatFoundResult: function(row) { return row[0];},
   formatMatch: null,
   autoFill: false,
   width: 0,
@@ -765,7 +763,7 @@ $.Autocompleter.Cache = function(options) {
       rawValue = (typeof rawValue == "string") ? [rawValue] : rawValue;
       
       var value = options.formatMatch(rawValue, i+1, options.data.length);
-      if ( value === false )
+      if ( value === false || value === undefined)
         continue;
       
       var firstChar = value.charAt(0).toLowerCase();
