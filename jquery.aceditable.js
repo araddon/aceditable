@@ -704,8 +704,6 @@ $.Autocompleter.defaults = {
   jsonterm: 'name',
   dataType: 'json',
   selectFirst: true,
-  formatItem: function(row) { return row[0]; },
-  formatFoundResult: function(row) { return row[0];},
   formatMatch: null,
   autoFill: false,
   width: 0,
