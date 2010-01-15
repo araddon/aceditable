@@ -309,7 +309,7 @@
             <b>Todo:</b>
             <ol class="list2">
                 <li>Support use of Backspace to delete created item.</li>
-                <li></li>
+                <li>Gracefully degrade to Textarea if ContentEditable not supported</li>
             </ol>
             <div class="yui-g " style="">
                 <h3 class="h_top">Demo 1: Use Content Editable instead of Textarea/Input, and uses @ hotkey</h3>
@@ -318,7 +318,7 @@
                         <label></label>
                         <div class="editable_base editable_input_area">
                             <div class="editable_shawdow">
-                                <div id="ce1" class="editable_input" contenteditable="true" style="">
+                                <div id="ce1" class="editable_input" contenteditable="true" style="" tabindex="1">
                                 </div>
                             </div>
                         </div>
