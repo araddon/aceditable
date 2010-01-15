@@ -30,11 +30,14 @@
 $.fn.extend({
   autocomplete: function(urlOrData, options) {
     var isUrl = typeof urlOrData == "string";
-    options = $.extend({}, $.Autocompleter.defaults, {
-      url: isUrl ? urlOrData : null,
-      data: isUrl ? null : urlOrData,
-      delay: isUrl ? $.Autocompleter.defaults.delay : 10,
-      max: options && !options.scroll ? 10 : 150
+    options = $.extend({
+      formatFoundResult: function(row) { return '<a contenteditable="false" href="#" tabindex="-1" >@' + row[options.jsonterm] + '</a>&nbsp;';},
+      formatItem: function(row) { return row[options.jsonterm]; }
+      }, $.Autocompleter.defaults, {
+        url: isUrl ? urlOrData : null,
+        data: isUrl ? null : urlOrData,
+        delay: isUrl ? $.Autocompleter.defaults.delay : 10,
+        max: options && !options.scroll ? 10 : 150
     }, options);
     
     // if highlight is set to false, replace it with a do-nothing function
@@ -216,6 +219,7 @@ $.Autocompleter = function(input, options) {
   }).focus(function(){
     // track whether the field has focus, we shouldn't process any
     // results if the field no longer has focus
+    log.debug("has focus")
     hasFocus++;
     if( autocActive === true ) {
       onChange(0, true);
@@ -700,8 +704,8 @@ $.Autocompleter.defaults = {
   jsonterm: 'name',
   dataType: 'json',
   selectFirst: true,
-  formatItem: function(row) { return row[options.jsonterm]; },
-  formatFoundResult: function(row) { return '<a contenteditable="false" href="#" tabindex="-1" >@' + row[options.jsonterm] + '</a>&nbsp;';},
+  formatItem: function(row) { return row[0]; },
+  formatFoundResult: function(row) { return row[0];},
   formatMatch: null,
   autoFill: false,
   width: 0,
