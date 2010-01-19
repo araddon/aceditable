@@ -30,15 +30,16 @@
 $.fn.extend({
   autocomplete: function(urlOrData, options) {
     var isUrl = typeof urlOrData == "string";
-    options = $.extend({
-      formatFoundResult: function(row) { return '<a contenteditable="false" href="#" tabindex="-1" >@' + row[options.jsonterm] + '</a>&nbsp;';},
-      formatItem: function(row) { return row[options.jsonterm]; }
-      }, $.Autocompleter.defaults, {
+    options = $.extend($.Autocompleter.defaults, {
         url: isUrl ? urlOrData : null,
         data: isUrl ? null : urlOrData,
         delay: isUrl ? $.Autocompleter.defaults.delay : 10,
         max: options && !options.scroll ? 10 : 150
     }, options);
+    
+    options.formatEditableResult = options.formatEditableResult || function(row) { return '<a contenteditable="false" href="#" tabindex="-1" >@' + row[options.jsonterm] + '</a>&nbsp;';};
+    options.formatResult = options.formatResult || function(row) { return row[options.jsonterm];};
+    options.formatItem = options.formatItem || function(row) { return row[options.jsonterm]; };
     
     // if highlight is set to false, replace it with a do-nothing function
     options.highlight = options.highlight || function(value) { return value; };
@@ -304,7 +305,7 @@ $.Autocompleter = function(input, options) {
       var cur = smartVal();
       cur = cur.substring(0,cursorStart -1);
       log.info("found Data! " + selected.data[0] + ' ' + selected.data[1])
-      v = cur + options.formatFoundResult(selected.data);
+      v = cur + options.formatResult(selected.data);
       if (input.value == undefined) {
         v = v + '<span id="cursorStart">—</span>';
       }
@@ -702,6 +703,8 @@ $.Autocompleter.defaults = {
   mustMatch: false,
   extraParams: {},
   jsonterm: 0, // 'name' ??
+  formatResult: null,//placeholder, function in above options
+  formatItem: null, //placeholder, function in above options
   dataType: 'json',
   selectFirst: true,
   formatMatch: null,

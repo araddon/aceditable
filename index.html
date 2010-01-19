@@ -354,7 +354,7 @@
                                         matchContains: true,
                                         scroll: false,
                                         hotkeymode:true,
-                                        formatFoundResult: function(row) { return '<a contenteditable="false" class="custom" href="#" tabindex="-1" >@' + row[0] + '</a>&nbsp;';},
+                                        formatResult: function(row) { return '<a contenteditable="false" class="custom" href="#" tabindex="-1" >@' + row[0] + '</a>&nbsp;';},
                                 });
 
                             });
@@ -383,7 +383,7 @@
                                     matchContains: true,
                                     scroll: false,
                                     hotkeymode:true,
-                                    formatFoundResult: function(row) { return '<a contenteditable="false" class="custom" href="#" tabindex="-1" >@' + row[0] + '</a>&nbsp;';}
+                                    formatResult: function(row) { return '<a contenteditable="false" class="custom" href="#" tabindex="-1" >@' + row[0] + '</a>&nbsp;';}
                             });
                             
                         </pre>
@@ -426,7 +426,7 @@
                                                 formatItem: function(row) { return '<img width="32" height="32" src="' + row[1] +'"> ' + row[2] + ' @' + row[0] + ': ' + row[3] + ' followers' },
                                                 startmsg: 'Type text, then @friend on twitter name...',
                                                 noresultsmsg: 'No matches, Do you want to create <a href="#">{q}</a>',
-                                                formatFoundResult: function(row) { return '<a contenteditable="false" class="custom" href="#" tabindex="-1" ><img width="16" height="16" src="' + row[1] +'"> @' + row[0] + '</a>&nbsp;';}
+                                                formatResult: function(row) { return '<a contenteditable="false" class="custom" href="#" tabindex="-1" ><img width="16" height="16" src="' + row[1] +'"> @' + row[0] + '</a>&nbsp;';}
                                         });
                                     });
                                 }
@@ -455,7 +455,7 @@
                                             formatItem: function(row) { return '<img width="32" height="32" src="' + row[1] +'"> ' + row[2] + ' @' + row[0] + ': ' + row[3] + ' followers' },
                                             startmsg: 'Type text, then @friend on twitter name...',
                                             noresultsmsg: 'No matches, Do you want to create <a href="#">{q}</a>',
-                                            formatFoundResult: function(row) { return '<a contenteditable="false" class="custom" href="#" tabindex="-1" ><img width="16" height="16" src="' + row[1] +'"> @' + row[0] + '</a>&nbsp;';}
+                                            formatResult: function(row) { return '<a contenteditable="false" class="custom" href="#" tabindex="-1" ><img width="16" height="16" src="' + row[1] +'"> @' + row[0] + '</a>&nbsp;';}
                                     });
                                 });
                             }
