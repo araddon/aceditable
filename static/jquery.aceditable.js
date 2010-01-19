@@ -29,26 +29,8 @@
   }
 $.fn.extend({
   autocomplete: function(urlOrData, options) {
-    var isUrl = typeof urlOrData == "string";
-    options = $.extend($.Autocompleter.defaults, {
-        url: isUrl ? urlOrData : null,
-        data: isUrl ? null : urlOrData,
-        delay: isUrl ? $.Autocompleter.defaults.delay : 10,
-        max: options && !options.scroll ? 10 : 150
-    }, options);
-    
-    options.formatEditableResult = options.formatEditableResult || function(row) { return '<a contenteditable="false" href="#" tabindex="-1" >@' + row[options.jsonterm] + '</a>&nbsp;';};
-    options.formatResult = options.formatResult || function(row) { return row[options.jsonterm];};
-    options.formatItem = options.formatItem || function(row) { return row[options.jsonterm]; };
-    
-    // if highlight is set to false, replace it with a do-nothing function
-    options.highlight = options.highlight || function(value) { return value; };
-    
-    // if the formatMatch option is not specified, then use formatItem for backwards compatibility
-    options.formatMatch = options.formatMatch || options.formatItem;
-    
     return this.each(function() {
-      new $.Autocompleter(this, options);
+      new $.Autocompleter(this, urlOrData, options);
     });
   },
   result: function(handler) {
@@ -68,7 +50,26 @@ $.fn.extend({
   }
 });
 
-$.Autocompleter = function(input, options) {
+$.Autocompleter = function(input, urlOrData, opts) {
+  var isUrl = typeof urlOrData == "string";
+  
+  var options = $.extend({},$.Autocompleter.defaults, {
+      url: isUrl ? urlOrData : null,
+      data: isUrl ? null : urlOrData,
+      delay: isUrl ? $.Autocompleter.defaults.delay : 10,
+      max: opts && !opts.scroll ? 10 : 150
+  }, opts);
+  //alert(options.formatResult)
+  
+  options.formatEditableResult = options.formatEditableResult || function(row) { return '<a contenteditable="false" href="#" tabindex="-1" >@' + row[options.jsonterm] + '</a>&nbsp;';};
+  options.formatResult = options.formatResult || function(row) { return row[options.jsonterm];};
+  options.formatItem = options.formatItem || function(row) { return row[options.jsonterm]; };
+  
+  // if highlight is set to false, replace it with a do-nothing function
+  options.highlight = options.highlight || function(value) { return value; };
+  
+  // if the formatMatch option is not specified, then use formatItem for backwards compatibility
+  options.formatMatch = options.formatMatch || options.formatItem;
 
   var KEY = {
     UP: 38,
