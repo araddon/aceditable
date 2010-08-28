@@ -533,7 +533,7 @@ $.Autocompleter = function(input, options) {
       return words[words.length - 1];
     // hotkeymode
     } else {
-      if (value && value.lastIndexOf('@') > 0){
+      if (value && value.lastIndexOf('@') >= 0){
         cursorStart = value.lastIndexOf('@') + 1;
       } else {
         log.error("found no @ in hotkeymode?" + value)
