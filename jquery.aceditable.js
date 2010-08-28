@@ -12,7 +12,7 @@
  * Revision: $Id: jquery.autocomplete.js 15 2009-08-22 10:30:27Z joern.zaefferer $
  */
 
-;(function($) {
+(function($) {
   
   if (window['log'] == undefined){
     window['log'] = {
@@ -27,10 +27,29 @@
       profile: function() {}
     };
   }
+
 $.fn.extend({
   autocomplete: function(urlOrData, options) {
+    var isUrl = typeof urlOrData == "string";
+    options = $.extend({
+      formatEditableResult: function(row) { return '<a contenteditable="false" href="#" tabindex="-1" >@' + row[options.jsonterm] + '</a>&nbsp;';},
+      formatResult: function(row) { return row[options.jsonterm];},
+      formatItem: function(row) { return row[options.jsonterm]; }
+      }, $.Autocompleter.defaults, {
+        url: isUrl ? urlOrData : null,
+        data: isUrl ? null : urlOrData,
+        delay: isUrl ? $.Autocompleter.defaults.delay : 10,
+        max: options && !options.scroll ? 10 : 150
+    }, options);
+    
+    // if highlight is set to false, replace it with a do-nothing function
+    options.highlight = options.highlight || function(value) { return value; };
+    
+    // if the formatMatch option is not specified, then use formatItem for backwards compatibility
+    options.formatMatch = options.formatMatch || options.formatItem;
+    
     return this.each(function() {
-      new $.Autocompleter(this, urlOrData, options);
+      new $.Autocompleter(this, options);
     });
   },
   result: function(handler) {
@@ -47,28 +66,13 @@ $.fn.extend({
   },
   unautocomplete: function() {
     return this.trigger("unautocomplete");
+  },
+  notfound: function() {
+    return this.trigger("ace_notfound");
   }
 });
 
-$.Autocompleter = function(input, urlOrData, opts) {
-  var isUrl = typeof urlOrData == "string";
-  
-  var options = $.extend({},$.Autocompleter.defaults, {
-      url: isUrl ? urlOrData : null,
-      data: isUrl ? null : urlOrData,
-      delay: isUrl ? $.Autocompleter.defaults.delay : 10,
-      max: opts && !opts.scroll ? 10 : 150
-  }, opts);
-  
-  options.formatEditableResult = options.formatEditableResult || function(row) { return '<a contenteditable="false" href="#" tabindex="-1" >@' + row[options.jsonterm] + '</a>&nbsp;';};
-  options.formatResult = options.formatResult || function(row) { return row[options.jsonterm];};
-  options.formatItem = options.formatItem || function(row) { return row[options.jsonterm]; };
-  
-  // if highlight is set to false, replace it with a do-nothing function
-  options.highlight = options.highlight || function(value) { return value; };
-  
-  // if the formatMatch option is not specified, then use formatItem for backwards compatibility
-  options.formatMatch = options.formatMatch || options.formatItem;
+$.Autocompleter = function(input, options) {
 
   var KEY = {
     UP: 38,
@@ -90,10 +94,6 @@ $.Autocompleter = function(input, urlOrData, opts) {
     DOLLAR:52,
     SEMIC:59
   };
-  // check if we are textarea/contenteditable, degrade to textarea if needed
-  if (input.value == undefined){
-    //setupContentEditable();
-  }
   // Create $ object for input element
   var $input = $(input).attr("autocomplete", "off").addClass(options.inputClass);
   
@@ -139,7 +139,10 @@ $.Autocompleter = function(input, urlOrData, opts) {
     // avoids issue where input had focus before the autocomplete was applied
     hasFocus = 1;
     var k=event.keyCode || event.which; // keyCode == 0 in Gecko/FF on keypress
-    //log.debug("keypress: " + k + ' ' + event.shiftKey)
+    //log.debug("keypress: " + k);
+    if (k == KEY.RETURN){
+      log.debug("in k = " + k + ' options.supressReturn =' + options.supressReturn)
+    }
     // track history, probably should push/pop an array
     prePreKeyPressCode = preKeyPressCode;
     preKeyPressCode = lastKeyPressCode;
@@ -197,12 +200,28 @@ $.Autocompleter = function(input, urlOrData, opts) {
       case KEY.RETURN:
       case KEY.RIGHT:
       case KEY.SEMIC:
+        if (k == KEY.RETURN)
+          event.preventDefault();
         if( selectCurrent() ) {
           // stop default to prevent a form submit, Opera needs special handling
-          if (k == KEY.RETURN)
+          log.debug("in k = " + k + ' options.supressReturn =' + options.supressReturn)
+          if (k == KEY.RETURN && options.supressReturn)
             event.preventDefault();
           blockSubmit = true;
-          return false;
+          hideResultsNow();
+          if (options.hotkeymode || options.multiple === true){
+            log.debug("in return false")
+            return false;
+          }
+        } else {
+          log.debug("nada found?  trigger notfound?");
+          $input.trigger("ace_notfound", {});
+          hideResultsNow();
+          if (k == KEY.RETURN && options.supressReturn)
+            event.preventDefault();
+        }
+        if (k == KEY.TAB || k == KEY.RETURN){
+          log.debug("was tab")
         }
         break;
         
@@ -222,7 +241,11 @@ $.Autocompleter = function(input, urlOrData, opts) {
     // results if the field no longer has focus
     log.debug("has focus")
     hasFocus++;
-    if( autocActive === true ) {
+    if( autocActive === true && options.hotkeymode) {
+      onChange(0, true);
+    } else if (!options.hotkeymode) {
+      if (!autocActive)
+        autocActive = true;
       onChange(0, true);
     }
   }).blur(function() {
@@ -234,7 +257,15 @@ $.Autocompleter = function(input, urlOrData, opts) {
     // show select when clicking in a focused field
     if ( hasFocus++ > 1 && !select.visible() ) {
       onChange(0, true);
+    } else {
+      log.debug('hasfocus = ' + hasFocus);
+      log.debug('hasfocus = ' + (hasFocus > 1));
+      log.debug('visible()' + (!select.visible()))
+      log.debug('visible()' + select.visible())
     }
+  }).bind('result',function(){
+    hasFocus = 0;
+    hideResults();
   }).bind("search", function() {
     // TODO why not just specifying both arguments?
     var fn = (arguments.length > 1) ? arguments[1] : null;
@@ -331,10 +362,8 @@ $.Autocompleter = function(input, urlOrData, opts) {
         editableSelection.focusNode &&
         editableSelection.focusOffset
     ) {
-        //ok
-    } else {
-        // Fing F of an F IE!  Die!
-    }
+        var temp = '';
+    } 
   }
   
   function storeContentEditableCursor() {
@@ -451,7 +480,7 @@ $.Autocompleter = function(input, urlOrData, opts) {
     
     currentValue = findSearchTerm(currentValue);
     previousValue = currentValue;
-    //log.debug("onChange curVal" + currentValue)
+    log.debug("onChange curVal = " + currentValue)
     
     if ( currentValue.length >= options.minChars) {
       $input.addClass(options.loadingClass);
@@ -459,6 +488,7 @@ $.Autocompleter = function(input, urlOrData, opts) {
         currentValue = currentValue.toLowerCase();
       request(currentValue, receiveData, hideResultsNow);
     } else {
+      log.debug("in else")
       stopLoading();
       if (options.startmsg != null) {
         select.emptyList();
@@ -577,6 +607,7 @@ $.Autocompleter = function(input, urlOrData, opts) {
 
   function hideResultsNow() {
     var wasVisible = select.visible();
+    autocActive = false;
     select.hide();
     clearTimeout(timeout);
     stopLoading();
@@ -614,11 +645,16 @@ $.Autocompleter = function(input, urlOrData, opts) {
   };
 
   function request(term, success, failure) {
+    log.debug("in request term = " + term)
     if (!options.matchCase)
       term = term.toLowerCase();
+    
+    log.debug("in request term2 = " + term)
     var data = cache.load(term);
+    log.debug("in request term3 = " + data)
     // recieve the cached data
     if (data && data.length) {
+      log.debug('found cache, not loading ' + term)
       success(term, data);
       return;
     // if an AJAX url has been supplied, try loading the data now
@@ -652,10 +688,12 @@ $.Autocompleter = function(input, urlOrData, opts) {
           }
         }
       });
-      if (found === true)
+      if (found === true){
+        log.debug("returning?")
         return;
+      }
     } 
-    
+    log.debug("after load in request?")
     select.emptyList();
     if (options.noresultsmsg != null) {
       stopLoading();
@@ -691,7 +729,9 @@ $.Autocompleter.defaults = {
   resultsClass: "ac_results",
   loadingClass: "ac_loading",
   minChars: 1,
+  live:false,
   startmsg: 'Start typing to get options...',
+  msgonenter:false,
   endmsg: null,
   noresultsmsg: null,
   delay: 400,
@@ -699,6 +739,7 @@ $.Autocompleter.defaults = {
   matchSubset: true,
   matchContains: false,
   cacheLength: 10,
+  supressReturn: false,
   max: 100,
   mustMatch: false,
   extraParams: {},
@@ -884,7 +925,7 @@ $.Autocompleter.Select = function (options, input, select, config) {
     .css("position", "absolute")
     .appendTo(document.body);
     list = $("<ul/>").appendTo(element).css({
-      width: typeof options.width == "string" || options.width > 0 ? options.width -2 : $(input).width() -2,
+      width: typeof options.width == "string" || options.width > 0 ? options.width -2 : $(input).width() -2
     }).mouseover( function(event) {
       if(target(event).nodeName && target(event).nodeName.toUpperCase() == 'LI') {
               active = $("li", list).removeClass(CLASSES.ACTIVE).index(target(event));
