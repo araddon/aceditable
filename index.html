@@ -415,12 +415,10 @@
                     </div>
                 </div>
             </div>
+            <!--
             <div class="yui-g " style="">
                 <h3 class="h_top">Demo 2: Content Editable with Hotkeys using Twitter User Names</h3>
                 <div class="yui-u first">
-                        <label for=""><span>Enter Valid Twitter Username</span></label>
-                        <input id="twittername" type="text" value="cnn" name="twittername"/>
-                        <br />
                         <label>Twitter edit type box, type @friend mixed amongst text</label>
                         <div class="editable_base editable_input_area">
                             <div class="editable_shawdow">
@@ -437,7 +435,7 @@
                             jQuery(document).ready(function() {
                                 
                                 function load_ce2(twittername){
-                                    $.getJSON('http://twitter.com/statuses/friends/' + twittername + '.json?&callback=?', {}, function(json){
+                                    $.getJSON('https://api.twitter.com/1/users/suggestions/twitter.json?callback=?', {}, function(json){
                                         log.info('SWEET, got json from twitter for ' + twittername + '!');
                                         var names = [];
                                         for ( var i = 0, ol = json.length; i < ol; i++ ) {
@@ -455,13 +453,14 @@
                                     });
                                 }
                                 load_ce2('cnn');
-                                $('#twittername').blur(function(){
-                                    load_ce2($(this).val() );
-                                });
+                                ///$('#twittername').blur(function(){
+                                //    load_ce2($(this).val() );
+                                //});
                             });
                         </script>
                     
                 </div>
+
                 <div id="plugin1" class="yui-u small_list ">
                     <div>
                         <pre class="brush: js" style="font-size:70%">
@@ -492,8 +491,9 @@
                     </div>
                 </div>
             </div>
+            -->
             <div class="yui-g " style="">
-                <h3 class="h_top">Demo 3: Start, End, Not found Messages and Events and Input/Textarea's</h3>
+                <h3 class="h_top">Demo 2: Start, End, Not found Messages and Events and Input/Textarea's</h3>
                 <div class="yui-u first">
                     <div>
                         <span class="wrap">

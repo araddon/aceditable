@@ -32,9 +32,7 @@ $.fn.extend({
   autocomplete: function(urlOrData, options) {
     var isUrl = typeof urlOrData == "string";
     options = $.extend({
-      formatEditableResult: function(row) { return '<a contenteditable="false" href="#" tabindex="-1" >@' + row[options.jsonterm] + '</a>&nbsp;';},
-      formatResult: function(row) { return row[options.jsonterm];},
-      formatItem: function(row) { return row[options.jsonterm]; }
+      formatEditableResult: function(row) { return '<a contenteditable="false" href="#" tabindex="-1" >@' + row[options.jsonterm] + '</a>&nbsp;';}
       }, $.Autocompleter.defaults, {
         url: isUrl ? urlOrData : null,
         data: isUrl ? null : urlOrData,
@@ -42,11 +40,14 @@ $.fn.extend({
         max: options && !options.scroll ? 10 : 150
     }, options);
     
+    options.formatResult = options.formatResult || function(row) { return row[options.jsonterm];};
+
     // if highlight is set to false, replace it with a do-nothing function
     options.highlight = options.highlight || function(value) { return value; };
     
     // if the formatMatch option is not specified, then use formatItem for backwards compatibility
-    options.formatMatch = options.formatMatch || options.formatItem;
+    options.formatMatch = options.formatMatch || function(row) { return row[options.jsonterm]; };
+    options.formatItem = options.formatItem || function(row) { return row[options.jsonterm]; };
     
     return this.each(function() {
       new $.Autocompleter(this, options);
